@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      DB_HOST: db
+      DB_USER: stockroom
+      DB_PASSWORD: stockroom-demo
+      DB_NAME: stockroom
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root-demo
+      MYSQL_USER: stockroom
+      MYSQL_PASSWORD: stockroom-demo
+      MYSQL_DATABASE: stockroom
+    healthcheck:
+      test: ["CMD", "mysql", "-h", "127.0.0.1", "-ustockroom", "-pstockroom-demo", "stockroom", "-e", "SELECT 1 FROM order_items LIMIT 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d:ro
+volumes:
+  data:

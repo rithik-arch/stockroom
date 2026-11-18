@@ -1,0 +1,26 @@
+CREATE TABLE products (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  sku VARCHAR(40) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  category VARCHAR(60) NOT NULL,
+  price_cents INT UNSIGNED NOT NULL,
+  stock INT UNSIGNED NOT NULL,
+  reorder_level INT UNSIGNED NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE orders (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  customer VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE order_items (
+  order_id INT UNSIGNED NOT NULL,
+  product_id INT UNSIGNED NOT NULL,
+  product_name VARCHAR(100) NOT NULL,
+  quantity INT UNSIGNED NOT NULL,
+  unit_price_cents INT UNSIGNED NOT NULL,
+  PRIMARY KEY (order_id, product_id),
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=InnoDB;
